@@ -4,13 +4,7 @@
             <div class="row">
                 <div class="col-md-8 offset-md-2">
                     <!-- Add new Task -->
-                    <div class="relative">
-                        <input
-                            type="text"
-                            class="form-control form-control-lg padding-right-lg"
-                            placeholder="+ Add new task. Press enter to save."
-                        />
-                    </div>
+                    <NewTask @added="handleAddedTask"/>
                     <!-- List of uncompleted tasks -->
                     <Tasks :tasks="uncompletedTasks"/>
                     <!-- show toggle button -->
@@ -36,8 +30,10 @@
 <script setup>
 
 import { computed, onMounted, ref } from "vue";
-import { allTasks } from "../http/task-api"
+import { allTasks, createTask } from "../http/task-api"
 import Tasks from "../components/tasks/Tasks.vue";
+import NewTask from "@/components/tasks/NewTask.vue";
+import axios from "axios";
 
 const tasks = ref([])
 
@@ -51,4 +47,15 @@ const completedTasks = computed(() => tasks.value.filter(task => task.is_complet
 const showToggleCompletedBtn = computed(() => uncompletedTasks.value.length > 0 && completedTasks.value.length > 0)
 const completedTasksIsVisible = computed(() => uncompletedTasks.value.length === 0 || completedTasks.value.length > 0)
 const showCompletedTasks = ref(completedTasksIsVisible.value)
+
+const handleAddedTask = async (newTask) => {
+    await axios.get(
+        // @todo Make it in more elegant way.
+        'http://localhost:8000/sanctum/csrf-cookie',
+        { withCredentials: true }
+    )
+    const { data:createdTask } = await createTask(newTask)
+    // Add newly created task to the start of the tasks list
+    tasks.value.unshift(createdTask.data)
+}
 </script>
