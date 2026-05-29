@@ -6,7 +6,7 @@
                     <!-- Add new Task -->
                     <NewTask @added="handleAddedTask"/>
                     <!-- List of uncompleted tasks -->
-                    <Tasks :tasks="uncompletedTasks"/>
+                    <Tasks :tasks="uncompletedTasks" @updated="handleUpdatedTask"/>
                     <!-- show toggle button -->
                     <div
                         class="text-center my-3"
@@ -30,7 +30,7 @@
 <script setup>
 
 import { computed, onMounted, ref } from "vue";
-import { allTasks, createTask } from "../http/task-api"
+import { allTasks, createTask, updateTask } from "../http/task-api"
 import Tasks from "../components/tasks/Tasks.vue";
 import NewTask from "@/components/tasks/NewTask.vue";
 import axios from "axios";
@@ -57,5 +57,18 @@ const handleAddedTask = async (newTask) => {
     const { data:createdTask } = await createTask(newTask)
     // Add newly created task to the start of the tasks list
     tasks.value.unshift(createdTask.data)
+}
+
+const handleUpdatedTask = async (task) => {
+    await axios.get(
+        // @todo Make it in more elegant way.
+        'http://localhost:8000/sanctum/csrf-cookie',
+        { withCredentials: true }
+    )
+    const { data:updatedTask } = await updateTask(task.id, {
+        name: task.name
+    })
+    const currentTask = tasks.value.find(item => item.id === task.id)
+    currentTask.name = updatedTask.data.name
 }
 </script>

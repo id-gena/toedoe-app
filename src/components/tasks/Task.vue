@@ -2,16 +2,19 @@
     <li class="list-group-item py-3">
         <div class="d-flex justify-content-start align-items-center">
             <input
-            class="form-check-input mt-0"
-            :class="completedClass"
-            type="checkbox" 
-            :checked="task.is_completed"/>
+                class="form-check-input mt-0"
+                :class="completedClass"
+                type="checkbox"
+                :checked="task.is_completed"/>
             <div class="ms-2 flex-grow-1"
                 :class="completedClass"
                 @dblclick="$event => isEdit = true"
                 title="Double click the text to edit or remove">
                 <div class="relative" v-if="isEdit">
-                    <input class="editable-task" type="text" @keyup.esc="$event => isEdit = false" v-focus/>
+                    <input class="editable-task" type="text"
+                    @keyup.esc="$event => isEdit = false"
+                    v-focus
+                    @keyup.enter="updateTask"/>
                 </div>
                 <span v-else >{{ task.name }}</span>
             </div>
@@ -30,9 +33,15 @@ const props = defineProps({
     task: Object
 })
 
+const emit = defineEmits(['updated'])
 const isEdit = ref(false)
 const completedClass = computed(() => props.task.is_completed ? "completed" : "")
 const vFocus = {
     mounted: (el) => el.focus()
+}
+const updateTask = event => {
+    const updatedTask = { ...props.task, name: event.target.value }
+    isEdit.value = false
+    emit('updated', updatedTask)
 }
 </script>
