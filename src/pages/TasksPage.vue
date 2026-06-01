@@ -8,6 +8,7 @@
                     <!-- List of uncompleted tasks -->
                     <Tasks :tasks="uncompletedTasks"
                         @updated="handleUpdatedTask"
+                        @removed="handleRemovedTask"
                         @completed="handleCompletedTask"/>
                     <!-- show toggle button -->
                     <div
@@ -26,6 +27,7 @@
                         :tasks="completedTasks"
                         :show="completedTasksIsVisible && showCompletedTasks"
                         @updated="handleUpdatedTask"
+                        @removed="handleRemovedTask"
                         @completed="handleCompletedTask"/>
                 </div>
             </div>
@@ -36,7 +38,7 @@
 <script setup>
 
 import { computed, onMounted, ref } from "vue";
-import { allTasks, createTask, updateTask, completeTask } from "../http/task-api"
+import { allTasks, createTask, updateTask, completeTask, removeTask } from "../http/task-api"
 import Tasks from "../components/tasks/Tasks.vue";
 import NewTask from "@/components/tasks/NewTask.vue";
 import axios from "axios";
@@ -89,5 +91,16 @@ const handleCompletedTask = async (task) => {
     })
     const currentTask = tasks.value.find(item => item.id === task.id)
     currentTask.is_completed = completedTask.data.is_completed
+}
+
+const handleRemovedTask = async (task) => {
+    await axios.get(
+        // @todo Make it in more elegant way.
+        'http://localhost:8000/sanctum/csrf-cookie',
+        { withCredentials: true }
+    )
+    await removeTask(task.id)
+    const index = tasks.value.findIndex((item) => item.id === task.id);
+    tasks.value.splice(index, 1);
 }
 </script>
