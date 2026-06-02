@@ -1,28 +1,86 @@
 import { defineStore } from "pinia";
-import { allTasks } from "../http/task-api";
-import { ref, reactive, computed } from "vue";
+import {
+    allTasks,
+    createTask,
+    updateTask,
+    completeTask,
+    removeTask,
+} from "../http/task-api";
+import { ref, computed } from "vue";
+import axios from "axios";
 
 
 export const useTaskStore = defineStore("taskStore", () => {
-  const tasks = ref([]);
+    const tasks = ref([]);
 
-  const uncompletedTasks = computed(() =>
-    tasks.value.filter((task) => !task.is_completed),
-  );
+    const uncompletedTasks = computed(() =>
+        tasks.value.filter((task) => !task.is_completed),
+    );
 
-  const completedTasks = computed(() =>
-    tasks.value.filter((task) => task.is_completed),
-  );
+    const completedTasks = computed(() =>
+        tasks.value.filter((task) => task.is_completed),
+    );
 
-  const fetchAllTasks = async () => {
-    const { data } = await allTasks();
-    tasks.value = data.data;
-  };
+    const fetchAllTasks = async () => {
+        const { data } = await allTasks();
+        tasks.value = data.data;
+    };
 
-  return {
-    tasks,
-    completedTasks,
-    uncompletedTasks,
-    fetchAllTasks,
-  };
+    const handleAddedTask = async (newTask) => {
+        await axios.get(
+            // @todo Make it in more elegant way.
+            'http://localhost:8000/sanctum/csrf-cookie',
+            { withCredentials: true }
+        )
+        const { data: createdTask } = await createTask(newTask);
+        tasks.value.unshift(createdTask.data);
+    };
+
+    const handleUpdatedTask = async (task) => {
+        await axios.get(
+            // @todo Make it in more elegant way.
+            'http://localhost:8000/sanctum/csrf-cookie',
+            { withCredentials: true }
+        )
+        const { data: updatedTask } = await updateTask(task.id, {
+            name: task.name,
+        });
+        const currentTask = tasks.value.find((item) => item.id === task.id);
+        currentTask.name = updatedTask.data.name;
+    };
+
+    const handleCompletedTask = async (task) => {
+        await axios.get(
+            // @todo Make it in more elegant way.
+            'http://localhost:8000/sanctum/csrf-cookie',
+            { withCredentials: true }
+        )
+        const { data: updatedTask } = await completeTask(task.id, {
+            is_completed: task.is_completed,
+        });
+        const currentTask = tasks.value.find((item) => item.id === task.id);
+        currentTask.is_completed = updatedTask.data.is_completed;
+    };
+
+    const handleRemovedTask = async (task) => {
+        await axios.get(
+            // @todo Make it in more elegant way.
+            'http://localhost:8000/sanctum/csrf-cookie',
+            { withCredentials: true }
+        )
+        await removeTask(task.id);
+        const index = tasks.value.findIndex((item) => item.id === task.id);
+        tasks.value.splice(index, 1);
+    };
+
+    return {
+        tasks,
+        completedTasks,
+        uncompletedTasks,
+        fetchAllTasks,
+        handleAddedTask,
+        handleUpdatedTask,
+        handleCompletedTask,
+        handleRemovedTask,
+    };
 })

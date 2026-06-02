@@ -4,12 +4,9 @@
             <div class="row">
                 <div class="col-md-8 offset-md-2">
                     <!-- Add new Task -->
-                    <NewTask @added="handleAddedTask"/>
+                    <NewTask/>
                     <!-- List of uncompleted tasks -->
-                    <Tasks :tasks="uncompletedTasks"
-                        @updated="handleUpdatedTask"
-                        @removed="handleRemovedTask"
-                        @completed="handleCompletedTask"/>
+                    <Tasks :tasks="uncompletedTasks"/>
                     <!-- show toggle button -->
                     <div
                         class="text-center my-3"
@@ -25,10 +22,7 @@
                     <!-- list of completed tasks -->
                     <Tasks 
                         :tasks="completedTasks"
-                        :show="completedTasksIsVisible && showCompletedTasks"
-                        @updated="handleUpdatedTask"
-                        @removed="handleRemovedTask"
-                        @completed="handleCompletedTask"/>
+                        :show="completedTasksIsVisible && showCompletedTasks"/>
                 </div>
             </div>
         </div>
@@ -38,16 +32,14 @@
 <script setup>
 
 import { computed, onMounted, ref } from "vue";
-import { createTask, updateTask, completeTask, removeTask } from "../http/task-api"
 import Tasks from "../components/tasks/Tasks.vue";
 import NewTask from "@/components/tasks/NewTask.vue";
-import axios from "axios";
 import { useTaskStore } from "@/stores/task";
 import { storeToRefs } from "pinia";
 
 
 const store = useTaskStore()
-const { tasks, completedTasks, uncompletedTasks } = storeToRefs(store);
+const { completedTasks, uncompletedTasks } = storeToRefs(store);
 
 onMounted(async () => {
     store.fetchAllTasks()
@@ -56,52 +48,4 @@ onMounted(async () => {
 const showToggleCompletedBtn = computed(() => uncompletedTasks.value.length > 0 && completedTasks.value.length > 0)
 const completedTasksIsVisible = computed(() => uncompletedTasks.value.length === 0 || completedTasks.value.length > 0)
 const showCompletedTasks = ref(completedTasksIsVisible.value)
-
-const handleAddedTask = async (newTask) => {
-    await axios.get(
-        // @todo Make it in more elegant way.
-        'http://localhost:8000/sanctum/csrf-cookie',
-        { withCredentials: true }
-    )
-    const { data:createdTask } = await createTask(newTask)
-    // Add newly created task to the start of the tasks list
-    tasks.value.unshift(createdTask.data)
-}
-
-const handleUpdatedTask = async (task) => {
-    await axios.get(
-        // @todo Make it in more elegant way.
-        'http://localhost:8000/sanctum/csrf-cookie',
-        { withCredentials: true }
-    )
-    const { data:updatedTask } = await updateTask(task.id, {
-        name: task.name
-    })
-    const currentTask = tasks.value.find(item => item.id === task.id)
-    currentTask.name = updatedTask.data.name
-}
-
-const handleCompletedTask = async (task) => {
-    await axios.get(
-        // @todo Make it in more elegant way.
-        'http://localhost:8000/sanctum/csrf-cookie',
-        { withCredentials: true }
-    )
-    const { data:completedTask } = await completeTask(task.id, {
-        is_completed: task.is_completed
-    })
-    const currentTask = tasks.value.find(item => item.id === task.id)
-    currentTask.is_completed = completedTask.data.is_completed
-}
-
-const handleRemovedTask = async (task) => {
-    await axios.get(
-        // @todo Make it in more elegant way.
-        'http://localhost:8000/sanctum/csrf-cookie',
-        { withCredentials: true }
-    )
-    await removeTask(task.id)
-    const index = tasks.value.findIndex((item) => item.id === task.id);
-    tasks.value.splice(index, 1);
-}
 </script>
