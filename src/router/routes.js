@@ -33,8 +33,8 @@ const routes = [
     },
     {
         path: "/",
-        name: "homepage",
-        component: Homepage
+        name: "home",
+        component: HomePage
     }
 ]
 

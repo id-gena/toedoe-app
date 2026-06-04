@@ -33,9 +33,7 @@
                         <router-link :to="{ name: 'register' }" class="btn btn-danger ms-2">Register</router-link>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="btn btn-outline-secondary ms-2"
-                            >Logout</a
-                        >
+                        <a href="#" class="btn btn-outline-secondary ms-2">Logout</a>
                     </li>
                 </ul>
             </div>
