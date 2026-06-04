@@ -1,12 +1,7 @@
-<script setup lang="ts">
-import router from '@/router';
-
-</script>
-
 <template>
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container py-2">
-            <a href="#" class="navbar-brand">
+            <a href="/" class="navbar-brand">
                 <span>Toedoe</span>
                 <strong>List</strong>
             </a>

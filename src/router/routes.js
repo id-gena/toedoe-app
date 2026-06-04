@@ -3,6 +3,7 @@ import LoginPage from "@/pages/LoginPage.vue";
 import RegisterPage from "@/pages/RegisterPage.vue";
 import SummaryPage from "@/pages/SummaryPage.vue";
 import NotFoundErrorPage from "@/pages/errors/NotFoundErrorPage.vue";
+import Homepage from "@/pages/Homepage.vue";
 
 const routes = [
     {
@@ -29,6 +30,11 @@ const routes = [
         path: "/:notFound(.*)",
         name: "error.404",
         component: NotFoundErrorPage
+    },
+    {
+        path: "/",
+        name: "homepage",
+        component: Homepage
     }
 ]
 
