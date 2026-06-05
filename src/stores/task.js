@@ -29,7 +29,7 @@ export const useTaskStore = defineStore("taskStore", () => {
     const handleAddedTask = async (newTask) => {
         await axios.get(
             // @todo Make it in more elegant way.
-            'http://localhost:8000/sanctum/csrf-cookie',
+            import.meta.env.VITE_BASE_URL + import.meta.env.VITE_CSRF_COOKIE_PATH,
             { withCredentials: true }
         )
         const { data: createdTask } = await createTask(newTask);
@@ -39,7 +39,7 @@ export const useTaskStore = defineStore("taskStore", () => {
     const handleUpdatedTask = async (task) => {
         await axios.get(
             // @todo Make it in more elegant way.
-            'http://localhost:8000/sanctum/csrf-cookie',
+            import.meta.env.VITE_BASE_URL + import.meta.env.VITE_CSRF_COOKIE_PATH,
             { withCredentials: true }
         )
         const { data: updatedTask } = await updateTask(task.id, {
@@ -52,7 +52,7 @@ export const useTaskStore = defineStore("taskStore", () => {
     const handleCompletedTask = async (task) => {
         await axios.get(
             // @todo Make it in more elegant way.
-            'http://localhost:8000/sanctum/csrf-cookie',
+            import.meta.env.VITE_BASE_URL + import.meta.env.VITE_CSRF_COOKIE_PATH,
             { withCredentials: true }
         )
         const { data: updatedTask } = await completeTask(task.id, {
@@ -65,7 +65,7 @@ export const useTaskStore = defineStore("taskStore", () => {
     const handleRemovedTask = async (task) => {
         await axios.get(
             // @todo Make it in more elegant way.
-            'http://localhost:8000/sanctum/csrf-cookie',
+            import.meta.env.VITE_BASE_URL + import.meta.env.VITE_CSRF_COOKIE_PATH,
             { withCredentials: true }
         )
         await removeTask(task.id);
