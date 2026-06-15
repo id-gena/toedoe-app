@@ -1,0 +1,1 @@
+declare module '@mahdikhashan/vue3-click-outside';
