@@ -1,31 +1,19 @@
 <template>
     <li class="list-group-item py-3">
         <div class="d-flex justify-content-start align-items-center">
-            <input
-                class="form-check-input mt-0"
-                :class="completedClass"
-                type="checkbox"
-                :checked="task.is_completed"
-                @change="markTaskAsCompleted"/>
-            <div class="ms-2 flex-grow-1"
-                :class="completedClass"
-                @dblclick="$event => isEdit = true"
+            <input class="form-check-input mt-0" :class="[completedClass, priorityClass]" type="checkbox"
+                :checked="task.is_completed" @change="markTaskAsCompleted" />
+            <div class="ms-2 flex-grow-1" :class="completedClass" @dblclick="$event => isEdit = true"
                 title="Double click the text to edit or remove">
                 <div class="relative" v-if="isEdit">
-                    <input class="editable-task" type="text"
-                    @keyup.esc="undo"
-                    v-focus
-                    @keyup.enter="updateTask"
-                    v-model="editingTask"/>
+                    <input class="editable-task" type="text" @keyup.esc="undo" v-focus @keyup.enter="updateTask"
+                        v-model="editingTask" />
                 </div>
-                <span v-else >{{ task.name }}</span>
+                <span v-else>{{ task.name }}</span>
             </div>
             <div class="task-date">24 Feb 12:00</div>
         </div>
-        <TaskActions
-            @edit="$event => isEdit = true"
-            @remove="removeTask"
-            v-show="!isEdit"/>
+        <TaskActions @edit="$event => isEdit = true" @remove="removeTask" v-show="!isEdit" />
     </li>
 </template>
 
@@ -68,4 +56,33 @@ const removeTask = () => {
         emit("removed", props.task);
     }
 };
+
+const priorityClass = computed(() =>
+    props.task.priority === null ?
+        "priority-none" :
+        `priority-${props.task.priority.name}`
+);
 </script>
+
+<style scoped>
+.form-check-input:checked {
+    background-color: rgb(108,117,125);
+    border-color: rgb(108,117,125);
+}
+.form-check-input:not(:checked) {
+   outline: 0;
+   border: 0;
+}
+.priority-high:not(:checked) {
+   box-shadow: 0 0 0 0.1rem rgb(220,53,69) !important;
+}
+.priority-medium:not(:checked) {
+   box-shadow: 0 0 0 0.1rem rgb(255,193,7) !important;
+}
+.priority-low:not(:checked) {
+   box-shadow: 0 0 0 0.1rem rgb(13,110,253) !important;
+}
+.priority-none:not(:checked) {
+   box-shadow: 0 0 0 0.1rem rgba(0,0,0,.25) !important;
+}
+</style>
