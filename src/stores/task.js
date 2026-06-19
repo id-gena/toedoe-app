@@ -44,6 +44,7 @@ export const useTaskStore = defineStore("taskStore", () => {
         )
         const { data: updatedTask } = await updateTask(task.id, {
             name: task.name,
+            priority_id: task.priority_id
         });
         const currentTask = tasks.value.find((item) => item.id === task.id);
         currentTask.name = updatedTask.data.name;
