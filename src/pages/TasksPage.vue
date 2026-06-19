@@ -3,6 +3,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8 offset-md-2">
+                    <!-- Task order -->
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h3 class="text-body mb-0">Tasks</h3>
+                        <SortTasks />
+                    </div>
+
                     <!-- Add new Task -->
                     <NewTask/>
                     <!-- List of uncompleted tasks -->
@@ -31,11 +37,13 @@
 
 <script setup>
 
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import Tasks from "../components/tasks/Tasks.vue";
 import NewTask from "@/components/tasks/NewTask.vue";
+import { useRoute } from "vue-router";
 import { useTaskStore } from "@/stores/task";
 import { storeToRefs } from "pinia";
+import SortTasks from "../components/tasks/SortTasks.vue";
 
 
 const store = useTaskStore()
@@ -48,4 +56,12 @@ onMounted(async () => {
 const showToggleCompletedBtn = computed(() => uncompletedTasks.value.length > 0 && completedTasks.value.length > 0)
 const completedTasksIsVisible = computed(() => uncompletedTasks.value.length === 0 || completedTasks.value.length > 0)
 const showCompletedTasks = ref(completedTasksIsVisible.value)
+
+const route = useRoute();
+
+watch(
+    () => route.query,
+    async (query) => await store.fetchAllTasks(query),
+    { immediate: true }
+);
 </script>
