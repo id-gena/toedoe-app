@@ -6,7 +6,10 @@
                     <!-- Task order -->
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h3 class="text-body mb-0">Tasks</h3>
-                        <SortTasks />
+                        <div class="d-flex">
+                            <FilterTasks class="me-2" />
+                            <SortTasks />
+                        </div>
                     </div>
 
                     <!-- Add new Task -->
@@ -44,6 +47,7 @@ import { useRoute } from "vue-router";
 import { useTaskStore } from "@/stores/task";
 import { storeToRefs } from "pinia";
 import SortTasks from "../components/tasks/SortTasks.vue";
+import FilterTasks from "@/components/tasks/FilterTasks.vue";
 
 
 const store = useTaskStore()
