@@ -37,14 +37,10 @@ export const useTaskStore = defineStore("taskStore", () => {
     };
 
     const handleUpdatedTask = async (task) => {
-        await axios.get(
-            // @todo Make it in more elegant way.
-            import.meta.env.VITE_BASE_URL + import.meta.env.VITE_CSRF_COOKIE_PATH,
-            { withCredentials: true }
-        )
         const { data: updatedTask } = await updateTask(task.id, {
             name: task.name,
-            priority_id: task.priority_id
+            priority_id: task.priority_id,
+            due_date: task.due_date,
         });
         const currentTask = tasks.value.find((item) => item.id === task.id);
         currentTask.name = updatedTask.data.name;
