@@ -1,4 +1,5 @@
 <template>
+  <!-- @todo Find a way how to fix https://github.com/nathanreyes/v-calendar/issues/1498#issuecomment-2371241473 -->
   <DatePicker
       v-model="newTask.due_date"
       :popover="{ placement: 'bottom-end' }"

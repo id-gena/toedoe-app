@@ -50,8 +50,8 @@
 import { computed, ref } from 'vue';
 import TaskActions from './TaskActions.vue';
 import SelectPriority from "./SelectPriority.vue";
-import { useDateFormatter } from "../../composables/useDateFormatter";
-import { useFocusInput } from "../../composables/useFocusInput";
+import { useDateFormatter } from "@/composables/useDateFormatter.js";
+import { useFocusInput } from "@/composables/useFocusInput.js";
 import IconCalendar from "../icons/IconCalendar.vue";
 import { DatePicker } from "v-calendar";
 import 'v-calendar/style.css';
